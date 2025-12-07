@@ -24,7 +24,7 @@ A **Vault** is a secure smart contract where your funds are locked until a speci
 1. Locate the **"New Savings Goal"** panel on the left side.  
 2. **Select Asset:** Choose between **USDC** or **EURC** as your savings currency.  
 3. **Vault Name:** Give your vault a personal name (e.g., *"New Car"*, *"Holiday Fund"*).  
-   > Note: This name is stored locally on your device.  
+   > Note: This name is stored on Firebase.  
 4. **Initial Deposit:** Enter the amount you want to lock immediately.  
 5. **Unlock Date:** Select the date when you want the funds to become available.  
    > ⚠️ You cannot withdraw funds for free before this date.  

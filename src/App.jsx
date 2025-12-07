@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, Plus, Wallet, PiggyBank, Calendar, TrendingUp, X, Hourglass, AlertTriangle, Loader2, LogOut, Smartphone, Copy, CheckCircle2, Info, Database, ExternalLink } from 'lucide-react';
+import { Lock, Unlock, Plus, Wallet, PiggyBank, Calendar, TrendingUp, X, Hourglass, AlertTriangle, Loader2, LogOut, Smartphone, Copy, CheckCircle2, Info, Database, ExternalLink, Github, BookOpen } from 'lucide-react';
 // For local use, install: npm install ethers
 import { ethers } from 'ethers';
 
@@ -487,6 +487,10 @@ export default function AeonVaults() {
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const i = setInterval(() => setNow(Date.now()), 60000); return () => clearInterval(i); }, []);
 
+  // --- CALCULA TOTAIS POR MOEDA ---
+  const totalUSDC = vaults.filter(v => v.asset === 'USDC').reduce((acc, v) => acc + v.amount, 0);
+  const totalEURC = vaults.filter(v => v.asset === 'EURC').reduce((acc, v) => acc + v.amount, 0);
+
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 font-sans p-4 md:p-8 flex justify-center selection:bg-purple-500 selection:text-white pb-20 relative">
       
@@ -613,7 +617,13 @@ export default function AeonVaults() {
         <div className="lg:col-span-7 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold flex items-center gap-2"><Lock className="w-5 h-5 text-purple-400" /> My Active Goals</h2>
-            <div className="text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800 text-slate-500 font-mono">Total Locked: ${vaults.reduce((acc, v) => acc + v.amount, 0).toFixed(2)}</div>
+            {/* --- UPDATED TOTAL DISPLAY --- */}
+            <div className="text-xs bg-slate-900 px-3 py-1.5 rounded border border-slate-800 text-slate-500 font-mono flex items-center gap-2">
+                <span>Total Locked:</span>
+                <span className="text-blue-400 font-bold">${totalUSDC.toFixed(2)}</span>
+                <span>+</span>
+                <span className="text-indigo-400 font-bold">€{totalEURC.toFixed(2)}</span>
+            </div>
           </div>
 
           <div className="grid gap-4">
@@ -714,6 +724,16 @@ export default function AeonVaults() {
            >
               View Contract on ArcScan <ExternalLink size={10} />
            </a>
+           
+           <a 
+             href="https://github.com/brnodes-dev/aeon-vaults" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             className="hover:text-purple-400 transition-colors underline decoration-slate-700 hover:decoration-purple-400 flex items-center gap-1"
+           >
+              User Guide <Github size={10} />
+           </a>
+
            <span className={`flex items-center gap-1 ${firebaseStatus === 'connected' ? 'text-emerald-500' : firebaseStatus === 'error' ? 'text-red-500' : 'text-slate-500'}`}>
               <Database size={10}/> {firebaseStatus === 'connected' ? 'Firebase Sync Active' : firebaseStatus === 'error' ? 'Sync Error (Check Console)' : 'Sync Disabled'}
            </span>

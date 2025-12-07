@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, Plus, Wallet, PiggyBank, Calendar, TrendingUp, X, Hourglass, AlertTriangle, Loader2, LogOut, Smartphone, Copy, CheckCircle2, Info, Database } from 'lucide-react';
-// Para uso local, instale: npm install ethers
+import { Lock, Unlock, Plus, Wallet, PiggyBank, Calendar, TrendingUp, X, Hourglass, AlertTriangle, Loader2, LogOut, Smartphone, Copy, CheckCircle2, Info, Database, ExternalLink } from 'lucide-react';
+// For local use, install: npm install ethers
 import { ethers } from 'ethers';
 
-// --- IMPORTANTE: INSTALAR FIREBASE (npm install firebase) ---
+// --- IMPORTANT: INSTALL FIREBASE (npm install firebase) ---
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
-// --- CONFIGURAÇÃO DO FIREBASE ---
-// Substitua pelos dados do seu Console se necessário
+// --- FIREBASE CONFIGURATION ---
+// Replace with your Console data if necessary
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBlk56YPxA-yfHCSOU8vN5dYd-PKMrn0TU",
   authDomain: "aeon-vaults.firebaseapp.com",
@@ -18,7 +18,7 @@ const FIREBASE_CONFIG = {
   appId: "1:326905237402:web:877e6a448ab456d5107423"
 };
 
-// --- CONFIGURAÇÃO DA REDE ARC ---
+// --- ARC NETWORK CONFIGURATION ---
 const ARC_CONFIG = {
   chainId: 5042002,
   chainIdHex: '0x4cef52',
@@ -40,18 +40,18 @@ export default function AeonVaults() {
             const database = getFirestore(app);
             setDb(database);
             setFirebaseStatus('connected');
-            console.log("🔥 Firebase conectado (Aguardando operações...)");
+            console.log("🔥 Firebase connected (Waiting for operations...)");
         } catch (e) {
-            console.error("❌ Erro ao inicializar Firebase:", e);
+            console.error("❌ Error initializing Firebase:", e);
             setFirebaseStatus('error');
         }
     } else {
-        console.warn("⚠️ Firebase não configurado.");
+        console.warn("⚠️ Firebase not configured.");
         setFirebaseStatus('disabled');
     }
   }, []);
 
-  // Endereços Oficiais
+  // Official Addresses
   const CONTRACTS = {
     USDC: '0x3600000000000000000000000000000000000000',
     EURC: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a',
@@ -81,7 +81,7 @@ export default function AeonVaults() {
     return FIXED_FEE;
   };
 
-  // Estados
+  // State
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
@@ -107,7 +107,7 @@ export default function AeonVaults() {
 
   const isAnyProcessing = processingId !== null;
 
-  // --- HELPERS UX ---
+  // --- UX HELPERS ---
   const showFeedback = (type, msg, duration = 4000) => {
       setFeedback({ type, message: msg });
       setTimeout(() => setFeedback(null), duration);
@@ -133,7 +133,7 @@ export default function AeonVaults() {
       }
   };
 
-  // --- FUNÇÕES DE REDE ---
+  // --- NETWORK FUNCTIONS ---
   const switchNetwork = async () => {
     if(!window.ethereum) return;
     try {
@@ -268,7 +268,7 @@ export default function AeonVaults() {
     showFeedback('info', 'Wallet Disconnected');
   };
 
-  // --- LÓGICA DO CONTRATO E DADOS ---
+  // --- CONTRACT LOGIC AND DATA ---
   const fetchVaults = async (_signer, _account) => {
     if (!_signer) return;
     setIsLoadingVaults(true);
@@ -289,7 +289,7 @@ export default function AeonVaults() {
           let displayName = `Vault #${v.id}`;
           let source = 'Default';
 
-          // TENTATIVA 1: Firebase
+          // ATTEMPT 1: Firebase
           if (db) {
               try {
                   const docRef = doc(db, "users", _account, "vaults", v.id.toString());
@@ -299,11 +299,11 @@ export default function AeonVaults() {
                       source = 'Firebase';
                   }
               } catch (err) {
-                  // Silencioso na leitura para não spammar console, erro crítico é na escrita
+                  // Silent on read error to avoid spamming console, critical error is on write
               }
           } 
           
-          // TENTATIVA 2: LocalStorage
+          // ATTEMPT 2: LocalStorage
           if (displayName === `Vault #${v.id}`) {
               const localName = localStorage.getItem(`aeon_vault_name_${v.id}`);
               if (localName) {
@@ -359,7 +359,7 @@ export default function AeonVaults() {
       const txCreate = await vaultContract.createVault(tokenAddress, amountWei, unlockTimestamp);
       await txCreate.wait();
 
-      // --- SALVAR NOME ---
+      // --- SAVE NAME ---
       const updatedVaultsData = await vaultContract.getUserVaults(account);
       if (updatedVaultsData && updatedVaultsData.length > 0) {
         const newVaultId = Number(updatedVaultsData[updatedVaultsData.length - 1].id);
@@ -369,18 +369,18 @@ export default function AeonVaults() {
 
             if (db) {
                 try {
-                    console.log(`Tentando salvar vault #${newVaultId} no Firebase...`);
+                    console.log(`Attempting to save vault #${newVaultId} to Firebase...`);
                     await setDoc(doc(db, "users", account, "vaults", newVaultId.toString()), {
                         name: newVaultName,
                         createdAt: new Date().toISOString()
                     });
-                    console.log(`✅ Salvo no Firebase com sucesso!`);
+                    console.log(`✅ Saved to Firebase successfully!`);
                 } catch (e) {
-                    console.error("❌ Erro ao salvar no Firebase:", e);
+                    console.error("❌ Error saving to Firebase:", e);
                     if (e.code === 'permission-denied') {
-                        showFeedback('error', 'Erro de Permissão Firebase: Verifique as Regras no Console!', 8000);
+                        showFeedback('error', 'Firebase Permission Error: Check Console Rules!', 8000);
                     } else if (e.code === 'unavailable') {
-                         showFeedback('error', 'Erro Firebase: Verifique sua conexão ou se instalou "npm install firebase"', 6000);
+                         showFeedback('error', 'Firebase Error: Check connection or npm install', 6000);
                     }
                 }
             }
@@ -490,7 +490,7 @@ export default function AeonVaults() {
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 font-sans p-4 md:p-8 flex justify-center selection:bg-purple-500 selection:text-white pb-20 relative">
       
-      {/* --- HEADER FIXO --- */}
+      {/* --- FIXED HEADER --- */}
       <nav className="fixed top-0 left-0 right-0 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md z-50 h-20">
         <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between relative">
           
@@ -558,7 +558,7 @@ export default function AeonVaults() {
             </div>
         )}
 
-        {/* Lado Esquerdo: Formulário */}
+        {/* Left Side: Form */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden group">
             {showConfetti && <div className="absolute inset-0 bg-purple-500/10 animate-pulse z-0"></div>}
@@ -590,6 +590,16 @@ export default function AeonVaults() {
               <div>
                 <label className="text-xs font-medium text-slate-500 ml-1 uppercase tracking-wider flex items-center gap-1"><Calendar className="w-3 h-3" /> Unlock Date</label>
                 <input type="date" min={todayStr} value={targetDate} onChange={(e) => setTargetDate(e.target.value)} className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-purple-500 color-scheme-dark"/>
+                
+                {/* --- PENALTY WARNING --- */}
+                <div className="mt-3 p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+                    <AlertTriangle className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-orange-200/80 leading-relaxed font-medium">
+                    <span className="text-orange-400 font-bold">Warning:</span> Early withdrawal incurs penalty fees. A 10% fee applies for amounts up to 50, and a fixed fee of 50 for amounts above 50.
+                    </p>
+                </div>
+                {/* ----------------------- */}
+
               </div>
 
               <button onClick={createVault} disabled={isAnyProcessing || !account} className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 mt-2 transition-all shadow-lg ${isAnyProcessing || !account ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-500 text-white shadow-purple-900/20 active:scale-95'}`}>
@@ -599,7 +609,7 @@ export default function AeonVaults() {
           </div>
         </div>
 
-        {/* Lado Direito: Lista de Cofres */}
+        {/* Right Side: Vault List */}
         <div className="lg:col-span-7 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold flex items-center gap-2"><Lock className="w-5 h-5 text-purple-400" /> My Active Goals</h2>
@@ -693,9 +703,17 @@ export default function AeonVaults() {
           </div>
         </div>
 
-        {/* STATUS FOOTER */}
-        <div className="fixed bottom-0 left-0 right-0 p-2 text-[10px] text-center text-slate-600 bg-[#020617]/90 backdrop-blur pointer-events-none flex justify-center gap-4">
+        {/* STATUS FOOTER (UPDATED) */}
+        <div className="fixed bottom-0 left-0 right-0 p-2 text-[10px] text-center text-slate-600 bg-[#020617]/90 backdrop-blur flex justify-center gap-4 z-50">
            <span>Network: {ARC_CONFIG.chainName}</span>
+           <a 
+             href="https://testnet.arcscan.app/address/0xe41431E37A1f944c1812bc29c593A6040c7bd6c3" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             className="hover:text-purple-400 transition-colors underline decoration-slate-700 hover:decoration-purple-400 flex items-center gap-1"
+           >
+              View Contract on ArcScan <ExternalLink size={10} />
+           </a>
            <span className={`flex items-center gap-1 ${firebaseStatus === 'connected' ? 'text-emerald-500' : firebaseStatus === 'error' ? 'text-red-500' : 'text-slate-500'}`}>
               <Database size={10}/> {firebaseStatus === 'connected' ? 'Firebase Sync Active' : firebaseStatus === 'error' ? 'Sync Error (Check Console)' : 'Sync Disabled'}
            </span>

@@ -9,7 +9,7 @@ This guide will walk you through how to use the interface to manage your savings
 
 To interact with Aeon Vaults, you need a Web3 wallet (like **MetaMask** or **Rabby**) configured for the **Arc Testnet**.
 
-1. Click the **"Connect Wallet"** button in the top right corner or the center of the screen.  
+1. Click the **"Connect Wallet"** button in the top right corner.  
 2. Approve the connection in your wallet pop-up.  
 3. **Sign the Message:** You will be asked to sign a message to verify ownership. This is free *(gasless)* and secure.  
 4. **Network Check:** If you are not on the Arc Testnet, the app will display a **"Wrong Network"** alert.  
@@ -29,7 +29,7 @@ A **Vault** is a secure smart contract where your funds are locked until a speci
 5. **Unlock Date:** Select the date when you want the funds to become available.  
    > ⚠️ You cannot withdraw funds for free before this date.  
 6. Click **"Create Locked Vault"**.  
-7. Confirm the **Approval transaction** (if needed) and the **Create transaction** in your wallet.
+7. Confirm the **Approval transaction** and the **Create transaction** in your wallet.
 
 ---
 
@@ -64,7 +64,7 @@ If the Unlock Date has passed:
 
 - The lock icon will change to an **Unlock** icon.  
 - The button will say **"Withdraw Total Balance"**.  
-- Click it to withdraw **100% of your funds + any generated yield (if applicable)** back to your wallet.  
+- Click it to withdraw **100% of your funds** back to your wallet.  
 - No fees are charged for standard withdrawals.
 
 ---
